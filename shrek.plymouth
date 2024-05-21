@@ -1,0 +1,10 @@
+[Plymouth Theme]
+Theme=Shrek
+Description=Cool Shrek Theme
+ModuleName=script
+ShowDelay=100
+DeviceTimeout=8
+
+[script]
+ImageDir=/usr/share/plymouth/themes/shrek/
+ScriptFile=/usr/share/plymouth/themes/shrek/shrek.script

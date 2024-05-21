@@ -1,0 +1,42 @@
+
+Window.SetBackgroundTopColor(0.141, 0.141, 0.141);
+Window.SetBackgroundBottomColor(0.141, 0.141, 0.9);
+
+width = Window.GetWidth();
+image = Image.Text("Hello. window dsawidtaha: " + width);
+spr = Sprite();
+spr.SetImage(image);
+
+centerSprite(spr);
+
+
+fun centerSprite(sprite) {
+    sprite.SetX(Window.GetWidth() / 2 - sprite.GetImage().GetWidth() / 2);
+    sprite.SetY(Window.GetHeight() / 2 - sprite.GetImage().GetHeight() / 2);
+}
+
+fun progress_callback(time, progress) {
+    progressStatus = "We have waited " + time + "seconds and we are " + (progress * 100) + "% though";
+    img = Image.Text(progressStatus);
+    spr.SetImage(img);
+}
+Plymouth.SetBootProgressFunction(progress_callback);
+
+#//fun refresh_callback() {
+#    spriteA = Sprite(Image("red-block.png"));
+#    centerSprite(spriteA);
+#    spriteA.SetPosition(100, 100, 100);
+#
+#
+#
+# //}
+
+#Plymouth.SetRefreshFunction(refresh_callback);
+
+#spriteA = Sprite(Image("red-block.png"));
+#centerSprite(spriteA);
+#spriteA.SetPosition(100, 100, 100);
+
+
+
+
