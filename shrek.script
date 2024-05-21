@@ -1,45 +1,128 @@
 
-Window.SetBackgroundTopColor(0.141, 0.141, 0.141);
-Window.SetBackgroundBottomColor(0.141, 0.141, 0.9);
-
-spr = Sprite();
-sprite = Sprite();
+#Window.SetBackgroundTopColor(0.141, 0.141, 0.141);
+#Window.SetBackgroundBottomColor(0.141, 0.141, 0.9);
 
 shrekImage = Image("shrek.png");
 
+shreksPerColumn = 9;
+
+targetShrekHeight = Window.GetHeight() / shreksPerColumn;
+scaleFactor = targetShrekHeight / shrekImage.GetHeight();
+shrekImage = shrekImage.Scale(targetShrekHeight, shrekImage.GetWidth() * scaleFactor);
+
+
+shreksPerRow = Math.Int(Window.GetWidth() / shrekImage.GetWidth());
+horizontalExtraSpace = (Window.GetWidth() % shrekImage.GetWidth());
+horizontalSpacing = horizontalExtraSpace / (shreksPerRow - 1);
+
+
+# Spiral Traversal
+left = 0;
+right = shreksPerRow - 1;
+top = 0;
+bottom = shreksPerColumn - 1;
+
+dir = "r";
+cX = -1;
+cY = 0;
+
+
+
+debug = Sprite();
+debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
+
 iterations = 0;
-tickStep = 0.2;
-lastTick = 0 - tickStep;
+tickStep = 0.07;
+lastTick = 1;
 
 # Every item needs a reference(or it will be deleted), so save every created shrek sprite
 shreks = [];
 shrekCount = 0;
+
+
+fun Shrek(creationTime) {
+    newShrek = [];
+    newShrek.creationTime = creationTime;
+    newShrek.sprite = Sprite(shrekImage);
+    return newShrek;
+}
+
 
 fun centerSprite(sprite) {
     sprite.SetX(Window.GetWidth() / 2 - sprite.GetImage().GetWidth() / 2);
     sprite.SetY(Window.GetHeight() / 2 - sprite.GetImage().GetHeight() / 2);
 }
 
-fun addShrek() {
-    shrekSize = shrekImage.GetWidth();
-    xPos = shrekSize * iterations;
+fun addShrek(time) {
+#    // spr.SetImage(Image.Text(Window.GetWidth() + "    " + Window.GetHeight() / 5, 0, 255, 255));
+    width = shrekImage.GetWidth();
+    height = shrekImage.GetHeight();
 
     index = shrekCount;
     shrekCount++;
 
-    shreks[index] = Sprite();
-    shreks[index].SetImage(shrekImage);
-    shreks[index].SetPosition(xPos, 0, 10);
+    shreks[index] = Shrek(time);
+    shreks[index].sprite.SetImage(shrekImage);
+
+    nextTile();
+    shreks[index].sprite.SetPosition(cX * width + cX * horizontalSpacing, cY * height, 10);
+
+#    end condition: cX = middle and cY == middle(decide on that)     # left == right -> final stretch 
+#    extra check: w >= h
+}
+
+fun nextTile() {
+    if (dir == "r") {
+        cX++;
+        if (cX == right) {
+            top++;
+            dir = "d";
+        }
+    }
+    else if (dir == "l") {
+        cX--;
+        if (cX == left) {
+            bottom--;
+            dir = "u";
+        }
+    }
+    else if (dir == "u") {
+        cY--;
+        if (cY == top) {
+            left++;
+            dir = "r";
+        }
+    }
+    else if (dir == "d") {
+        cY++;
+        if (cY == bottom) {
+            right--;
+            dir = "l";
+        }
+    }
+}
+
+fun printProgress(time, progress) {
+    #debug.SetImage(Image.Text(time - lastTick, 0, 255, 255));
+    lastTime = time;
+    progressStatus = "We have waited " + time + " seconds and we are " + (progress * 100) + "% though - " + (time - lastTick);
+    img = Image.Text(progressStatus, 255, 255, 255);
+    #spr.SetImage(img);
 }
 
 fun progress_callback(time, progress) {
-    progressStatus = "We have waited " + time + "seconds and we are " + (progress * 100) + "% though - " + (time - lastTick);
-    img = Image.Text(progressStatus);
-    spr.SetImage(img);
+    printProgress(time, progress);
     if (time - lastTick >= tickStep) {
-        addShrek();
+        addShrek(time);
         iterations++;
         lastTick += tickStep;
+    }
+    # make every shrek fade out
+    for (i = 0; i < shrekCount; i++) {
+        shrek = shreks[i];
+        if (time - shrek.creationTime >= 1) {
+            shrek.sprite.SetOpacity((time - shrek.creationTime));
+        }
     }
 }
 Plymouth.SetBootProgressFunction(progress_callback);
