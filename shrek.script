@@ -3,8 +3,10 @@
 #Window.SetBackgroundBottomColor(0.141, 0.141, 0.9);
 
 shrekImage = Image("shrek.png");
+logoImage = Image("logo.png");
+logoImage = logoImage.Scale(logoImage.GetWidth() * 0.25, logoImage.GetHeight() * 0.25);
 
-shreksPerColumn = 9;
+shreksPerColumn = 5;
 
 targetShrekHeight = Window.GetHeight() / shreksPerColumn;
 scaleFactor = targetShrekHeight / shrekImage.GetHeight();
@@ -26,19 +28,25 @@ dir = "r";
 cX = -1;
 cY = 0;
 
+fadeTime = 2; # seconds to fade in and out
+logoTime = 2;
 
+spiralFinished = 0;
 
 debug = Sprite();
 debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
 
 iterations = 0;
-tickStep = 0.07;
+tickStep = 0.17;
 lastTick = 1;
 
 # Every item needs a reference(or it will be deleted), so save every created shrek sprite
 shreks = [];
 shrekCount = 0;
 
+fun log(msg) {
+    debug.SetImage(Image.Text(msg, 255, 255, 255));
+}
 
 fun Shrek(creationTime) {
     newShrek = [];
@@ -51,6 +59,10 @@ fun Shrek(creationTime) {
 fun centerSprite(sprite) {
     sprite.SetX(Window.GetWidth() / 2 - sprite.GetImage().GetWidth() / 2);
     sprite.SetY(Window.GetHeight() / 2 - sprite.GetImage().GetHeight() / 2);
+}
+
+fun ceil(num) {
+    return Math.Int(num + 0.5);
 }
 
 fun addShrek(time) {
@@ -67,8 +79,22 @@ fun addShrek(time) {
     nextTile();
     shreks[index].sprite.SetPosition(cX * width + cX * horizontalSpacing, cY * height, 10);
 
-#    end condition: cX = middle and cY == middle(decide on that)     # left == right -> final stretch 
-#    extra check: w >= h
+    if (cX == ceil(shreksPerRow / 2) - 1 && cY == ceil(shreksPerColumn / 2) - 1) {
+        spiralFinished = 1;
+    }
+
+    if (spiralFinished) {
+        Animation(shreks[index].sprite, time, fadeTime, 0, 1, 1, "quadratic", fun(sprite, val) {
+            sprite.SetOpacity(val);
+        }, fun(sprite) {
+            animateLogo();
+        });
+    } else {
+        Animation(shreks[index].sprite, time, fadeTime, 0, 1, 1, "quadratic", fun(sprite, val) {
+            sprite.SetOpacity(val);
+        }, fun(sprite) {});
+    }
+    #  TODO:   extra check: w >= h
 }
 
 fun nextTile() {
@@ -102,27 +128,101 @@ fun nextTile() {
     }
 }
 
-fun printProgress(time, progress) {
-    #debug.SetImage(Image.Text(time - lastTick, 0, 255, 255));
-    lastTime = time;
-    progressStatus = "We have waited " + time + " seconds and we are " + (progress * 100) + "% though - " + (time - lastTick);
-    img = Image.Text(progressStatus, 255, 255, 255);
-    #spr.SetImage(img);
+fun animateLogo(time) {
+    log("logo");
+    Animation(logoSprite, time, logoTime, 0, 1, 0, "quadratic", fun(sprite, val) {
+        sprite.SetOpacity(val);
+    }, fun(sprite) {
+        sprite.SetOpacity(1);
+    });
 }
 
+logoAnimStart = -1;
+logoSprite = Sprite();
+logoSprite.SetImage(logoImage);
+logoSprite.SetOpacity(0);
+
+once = 0;
+
 fun progress_callback(time, progress) {
+    animationTick(time);
     printProgress(time, progress);
-    if (time - lastTick >= tickStep) {
+    if (time - lastTick >= tickStep && !spiralFinished) {
         addShrek(time);
         iterations++;
         lastTick += tickStep;
     }
-    # make every shrek fade out
-    for (i = 0; i < shrekCount; i++) {
-        shrek = shreks[i];
-        if (time - shrek.creationTime >= 1) {
-            shrek.sprite.SetOpacity((time - shrek.creationTime));
-        }
-    }
 }
 Plymouth.SetBootProgressFunction(progress_callback);
+
+
+#// =============================================
+#// ------------- Animation Engine --------------
+#// =============================================
+
+
+animObjects = [];
+animObjectsLength = 0;
+
+#// -------- Animation Tick for all animations ----------
+fun animationTick(time) {
+    for (local.i = 0; local.i < animObjectsLength; local.i++) {
+        animObjects[local.i].tick(time);
+    }
+}
+
+#// --------------- Constructor -----------------
+Animation = fun(target, startTime, duration, start, end, dual, type, tickCallback, endCallback) {
+    newAnim = [] | global.Animation;
+    newAnim.target = target;
+    newAnim.startTime = startTime;
+    newAnim.duration = duration;
+    newAnim.dual = dual;
+    newAnim.type = type;
+    newAnim.tickCallback = tickCallback;
+    newAnim.endCallback = endCallback;
+    newAnim.start = start;
+    newAnim.end = end;
+
+    newAnim.hasEnded = 0;
+
+    animObjects[animObjectsLength] = newAnim;
+    animObjectsLength++;
+
+    return newAnim;
+} | [];
+
+#// --------------- Animation Tick -----------------
+Animation.tick = fun(time) {
+    if (this.hasEnded) {
+        return;
+    }
+    if (this.dual) {
+        existenceTime = time - this.startTime;
+        factor = existenceTime - this.duration / 2; # // -duration -> 0 -> duration
+        factor /= this.duration / 2; # - 1 -> 0 -> 1
+    } else {
+        existenceTime = time - this.startTime;
+        factor = existenceTime / this.duration;
+    }
+
+    if (this.type == "quadratic") {
+        factor *= factor;
+    }
+
+    #//factor = Math.Clamp(timepoint, 0, 1);
+
+    newVal = this.start + (this.end - this.start) * factor;
+    this.tickCallback(target, newVal);
+    if (this.dual) {
+        if (existenceTime > this.duration / 2) {
+            this.endCallback(target);
+            this.hasEnded = 1;
+        }
+    } else {
+        if (existenceTime > this.duration) {
+            this.endCallback(target);
+            this.hasEnded = 1;
+        }
+    }
+};
