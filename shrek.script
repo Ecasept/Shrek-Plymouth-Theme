@@ -28,7 +28,7 @@ dir = "r";
 cX = -1;
 cY = 0;
 
-fadeTime = 2; # seconds to fade in and out
+fadeTime = 4; # seconds to fade in and out
 logoTime = 2;
 
 spiralFinished = 0;
@@ -78,23 +78,22 @@ fun addShrek(time) {
 
     nextTile();
     shreks[index].sprite.SetPosition(cX * width + cX * horizontalSpacing, cY * height, 10);
+    shreks[index].sprite.SetOpacity(0);
 
     if (cX == ceil(shreksPerRow / 2) - 1 && cY == ceil(shreksPerColumn / 2) - 1) {
         spiralFinished = 1;
     }
 
     if (spiralFinished) {
-        Animation(shreks[index].sprite, time, fadeTime, 0, 1, 1, "quadratic", fun(sprite, val) {
-            sprite.SetOpacity(val);
-        }, fun(sprite) {
-            animateLogo();
-        });
+        Animation(shreks[index].sprite, time, fadeTime / 2, 0, 1, 0, "quadratic", fun(sprite, val) {
+            sprite.SetOpacity(-val + 1);
+        }, fun(sprite) { animateLogo(time); });
     } else {
         Animation(shreks[index].sprite, time, fadeTime, 0, 1, 1, "quadratic", fun(sprite, val) {
-            sprite.SetOpacity(val);
+            sprite.SetOpacity(-val + 1);
         }, fun(sprite) {});
     }
-    #  TODO:   extra check: w >= h
+    #//  TODO:   extra check: w >= h
 }
 
 fun nextTile() {
@@ -132,6 +131,7 @@ fun animateLogo(time) {
     log("logo");
     Animation(logoSprite, time, logoTime, 0, 1, 0, "quadratic", fun(sprite, val) {
         sprite.SetOpacity(val);
+        log(val);
     }, fun(sprite) {
         sprite.SetOpacity(1);
     });
@@ -203,7 +203,8 @@ Animation.tick = fun(time) {
         factor /= this.duration / 2; # - 1 -> 0 -> 1
     } else {
         existenceTime = time - this.startTime;
-        factor = existenceTime / this.duration;
+        factor = existenceTime - this.duration;
+        factor /= this.duration;
     }
 
     if (this.type == "quadratic") {
@@ -214,15 +215,9 @@ Animation.tick = fun(time) {
 
     newVal = this.start + (this.end - this.start) * factor;
     this.tickCallback(target, newVal);
-    if (this.dual) {
-        if (existenceTime > this.duration / 2) {
-            this.endCallback(target);
-            this.hasEnded = 1;
-        }
-    } else {
-        if (existenceTime > this.duration) {
-            this.endCallback(target);
-            this.hasEnded = 1;
-        }
+    if (existenceTime > this.duration) {
+        this.endCallback(target);
+        this.hasEnded = 1;
     }
+
 };
