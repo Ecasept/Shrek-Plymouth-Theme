@@ -2,11 +2,18 @@
 Window.SetBackgroundTopColor(0.141, 0.141, 0.141);
 Window.SetBackgroundBottomColor(0.141, 0.141, 0.9);
 
-shrekImage = Image("shrek.png")
+spr = Sprite();
+sprite = Sprite();
 
-iterations = 0
-tickStep = 0.2
-lastTick = 0 - tickStep
+shrekImage = Image("shrek.png");
+
+iterations = 0;
+tickStep = 0.2;
+lastTick = 0 - tickStep;
+
+# Every item needs a reference(or it will be deleted), so save every created shrek sprite
+shreks = [];
+shrekCount = 0;
 
 fun centerSprite(sprite) {
     sprite.SetX(Window.GetWidth() / 2 - sprite.GetImage().GetWidth() / 2);
@@ -17,13 +24,16 @@ fun addShrek() {
     shrekSize = shrekImage.GetWidth();
     xPos = shrekSize * iterations;
 
-    sprite = Sprite();
-    sprite.SetImage(shrekImage);
-    sprite.SetPosition(xPos, 0, 10);
+    index = shrekCount;
+    shrekCount++;
+
+    shreks[index] = Sprite();
+    shreks[index].SetImage(shrekImage);
+    shreks[index].SetPosition(xPos, 0, 10);
 }
 
 fun progress_callback(time, progress) {
-    progressStatus = "We have waited " + time + "seconds and we are " + (progress * 100) + "% though";
+    progressStatus = "We have waited " + time + "seconds and we are " + (progress * 100) + "% though - " + (time - lastTick);
     img = Image.Text(progressStatus);
     spr.SetImage(img);
     if (time - lastTick >= tickStep) {
