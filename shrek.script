@@ -18,32 +18,30 @@ horizontalExtraSpace = (Window.GetWidth() % shrekImage.GetWidth());
 horizontalSpacing = horizontalExtraSpace / (shreksPerRow - 1);
 
 
-# Spiral Traversal
-left = 0;
-right = shreksPerRow - 1;
-top = 0;
-bottom = shreksPerColumn - 1;
 
-dir = "r";
-cX = -1;
-cY = 0;
+
+
+
+
+
+
+
+
+
+
 
 fadeTime = 4; # seconds to fade in and out
 logoTime = 2;
 
 spiralFinished = 0;
 
-debug = Sprite();
-debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
-
-iterations = 0;
-tickStep = 0.17;
-lastTick = 1;
-
 # Every item needs a reference(or it will be deleted), so save every created shrek sprite
 shreks = [];
 shrekCount = 0;
 
+
+debug = Sprite();
+debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
 fun log(msg) {
     debug.SetImage(Image.Text(msg, 255, 255, 255));
 }
@@ -87,15 +85,24 @@ fun addShrek(time) {
     if (spiralFinished) {
         Animation(shreks[index].sprite, time, fadeTime / 2, 0, 1, 0, "quadratic", fun(sprite, val) {
             sprite.SetOpacity(-val + 1);
-        }, fun(sprite) { animateLogo(time); });
+        }, fun(sprite, time) { animateLogo(time); });
     } else {
         Animation(shreks[index].sprite, time, fadeTime, 0, 1, 1, "quadratic", fun(sprite, val) {
             sprite.SetOpacity(-val + 1);
-        }, fun(sprite) {});
+        }, fun(sprite, time) {});
     }
     #//  TODO:   extra check: w >= h
 }
 
+# Spiral Traversal
+left = 0;
+right = shreksPerRow - 1;
+top = 0;
+bottom = shreksPerColumn - 1;
+
+dir = "r";
+cX = -1;
+cY = 0;
 fun nextTile() {
     if (dir == "r") {
         cX++;
@@ -127,22 +134,41 @@ fun nextTile() {
     }
 }
 
-fun animateLogo(time) {
-    log("logo");
-    Animation(logoSprite, time, logoTime, 0, 1, 0, "quadratic", fun(sprite, val) {
-        sprite.SetOpacity(val);
+logoAnimStart = -1;
+logoSprite = Sprite();
+logoSprite.SetImage(logoImage);
+logoSprite.SetOpacity(1);
+
+lastShrekXTile = ceil(shreksPerRow / 2) - 1;
+lastShrekPos = lastShrekXTile * shrekImage.GetWidth() + lastShrekXTile * horizontalSpacing;
+logoStartXPos = lastShrekPos + shrekImage.GetWidth() - logoImage.GetWidth();
+log(logoStartXPos);
+logoSprite.SetPosition(logoStartXPos, Window.GetHeight() / 2 - logoImage.GetHeight() / 2, 10);
+
+logoEndXPos = Window.GetWidth() / 2;
+
+
+blackImage = Image("black.png");
+blackRightEdgePos = lastShrekPos + shrekImage.GetWidth();
+blackPos = blackRightEdgePos - blackImage.GetWidth();
+blackSprite = Sprite(blackImage);
+blackSprite.SetPosition(blackPos, 0, 1000);
+blackSprite.SetOpacity(0);
+
+    fun animateLogo(time) {
+    log(logoSprite.GetImage().GetWidth());
+    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndXPos, 0, "quadratic", fun(sprite, val) {
+        val += logoEndXPos;
+        sprite.SetX(val);
         log(val);
-    }, fun(sprite) {
+    }, fun(sprite, time) {
         sprite.SetOpacity(1);
     });
 }
 
-logoAnimStart = -1;
-logoSprite = Sprite();
-logoSprite.SetImage(logoImage);
-logoSprite.SetOpacity(0);
-
-once = 0;
+iterations = 0;
+tickStep = 0.17;
+lastTick = 1;
 
 fun progress_callback(time, progress) {
     animationTick(time);
@@ -213,10 +239,14 @@ Animation.tick = fun(time) {
 
     #//factor = Math.Clamp(timepoint, 0, 1);
 
+    if (this.target.GetImage().GetWidth() == 480) {
+        #log("factor:" + factor);
+    }
+
     newVal = this.start + (this.end - this.start) * factor;
     this.tickCallback(target, newVal);
     if (existenceTime > this.duration) {
-        this.endCallback(target);
+        this.endCallback(target, time);
         this.hasEnded = 1;
     }
 
