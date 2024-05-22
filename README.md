@@ -50,7 +50,7 @@ sudo plymouth quit
 
 **But beware!** This might do some weird stuff with your screen. You can try changing to you default tty with `Ctrl`+`Alt`+`F2`.
 
-
+The splash screen will be black if there is an error in the script.
 
 
 On my system this didn't work (It would just show the default splash screen with three dots. But it would apply the splash screen correctly when booting) and the debug output didn't help me anymore.
