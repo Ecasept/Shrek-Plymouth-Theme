@@ -1,22 +1,23 @@
+# Shrek Plymouth Theme
+# The coolest of all themes
 
-#Window.SetBackgroundTopColor(0.141, 0.141, 0.141);
-#Window.SetBackgroundBottomColor(0.141, 0.141, 0.9);
+# Adjust these if they are wrong
+windowWidth = Window.GetWidth();
+windowHeight = Window.GetHeight();
 
 shrekImage = Image("shrek.png");
 logoImage = Image("logo.png");
 logoImage = logoImage.Scale(logoImage.GetWidth() * 0.25, logoImage.GetHeight() * 0.25);
 
 shreksPerColumn = 5;
-targetShrekHeight = Window.GetHeight() / shreksPerColumn;
+targetShrekHeight = 1200 / shreksPerColumn;
 scaleFactor = targetShrekHeight / shrekImage.GetHeight();
 shrekImage = shrekImage.Scale(targetShrekHeight, shrekImage.GetWidth() * scaleFactor);
 
 
-shreksPerRow = Math.Int(Window.GetWidth() / shrekImage.GetWidth());
-horizontalExtraSpace = (Window.GetWidth() % shrekImage.GetWidth());
+shreksPerRow = Math.Int(windowWidth / shrekImage.GetWidth());
+horizontalExtraSpace = (windowWidth % shrekImage.GetWidth());
 horizontalSpacing = horizontalExtraSpace / (shreksPerRow - 1);
-
-
 
 
 
@@ -40,7 +41,7 @@ shrekCount = 0;
 
 
 debug = Sprite();
-# debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
+# debug.SetPosition(windowWidth / 2, windowHeight / 2, 100);
 debug.SetPosition(0, 0, 100);
 fun log(msg) {
     return; # Disable debug
@@ -56,8 +57,8 @@ fun Shrek(creationTime) {
 
 
 fun centerSprite(sprite) {
-    sprite.SetX(Window.GetWidth() / 2 - sprite.GetImage().GetWidth() / 2);
-    sprite.SetY(Window.GetHeight() / 2 - sprite.GetImage().GetHeight() / 2);
+    sprite.SetX(windowWidth / 2 - sprite.GetImage().GetWidth() / 2);
+    sprite.SetY(windowHeight / 2 - sprite.GetImage().GetHeight() / 2);
 }
 
 fun ceil(num) {
@@ -168,7 +169,7 @@ logoSprite.SetOpacity(0);
 lastShrekXTile = ceil(shreksPerRow / 2) - 1;
 lastShrekPos = lastShrekXTile * shrekImage.GetWidth() + lastShrekXTile * horizontalSpacing;
 logoStartXPos = lastShrekPos + shrekImage.GetWidth() - logoImage.GetWidth();
-logoSprite.SetPosition(logoStartXPos, Window.GetHeight() / 2 - logoImage.GetHeight() / 2, -11);
+logoSprite.SetPosition(logoStartXPos, windowHeight / 2 - logoImage.GetHeight() / 2, -11);
 
 
 # shrekImage and logoImage are next to each other and should be in the middle
@@ -176,7 +177,7 @@ logoSprite.SetPosition(logoStartXPos, Window.GetHeight() / 2 - logoImage.GetHeig
 logoSpacing = shrekImage.GetWidth() / 6;
 
 combinedWidth = shrekImage.GetWidth() + logoImage.GetWidth() + logoSpacing;
-combinedMiddle = Window.GetWidth() / 2 - combinedWidth / 2;
+combinedMiddle = windowWidth / 2 - combinedWidth / 2;
 
 logoEndX = combinedMiddle + shrekImage.GetWidth() + logoSpacing;
 
@@ -184,7 +185,7 @@ logoEndX = combinedMiddle + shrekImage.GetWidth() + logoSpacing;
 shrekEndX = combinedMiddle;
 
 blackImage = Image("black.png");
-blackImage.Scale(Window.GetWidth(), Window.GetHeight());
+blackImage.Scale(windowWidth, windowHeight);
 
 blackRightEdgePos = lastShrekPos + shrekImage.GetWidth(); # Position of right edge
 blackPos = blackRightEdgePos - blackImage.GetWidth();
@@ -227,7 +228,7 @@ tickStep = 0.1;
 lastTick = 1;
 
 fun progress_callback(time, progress) {
-    # log("height: " +  Window.GetHeight() + " time: " + time + " s0x: " + shreks[0].sprite.GetY() + " s-1x: " + shreks[shrekCount-1].sprite.GetY() + " shrekHeight: " + shrekImage.GetHeight() + " targetShrekHeight: " + targetShrekHeight + " scaleFactor: " + scaleFactor + " progress: " + progress);
+    # log("height: " +  windowHeight + " time: " + time + " s0x: " + shreks[0].sprite.GetY() + " s-1x: " + shreks[shrekCount-1].sprite.GetY() + " shrekHeight: " + shrekImage.GetHeight() + " targetShrekHeight: " + targetShrekHeight + " scaleFactor: " + scaleFactor + " progress: " + progress);
     animationTick(time);
     printProgress(time, progress);
     if (time - lastTick >= tickStep && !spiralFinished) {
