@@ -19,8 +19,11 @@ Note: You may need to install the script plugin. On Fedora this can be done usin
 sudo dnf install plymouth-plugin-script
 ```
 
+# This Theme
+This theme will only work if your monitor is wider than it is tall. If you want to install it, execute `sudo ./install.sh`.
+
 # Testing
-If you want to install your theme, you need to execute this command.
+If you want to install your theme, you need to execute this command (it might take a while to execute).
 <pre>
 sudo plymouth-set-default-theme -R <i>your-theme</i>
 </pre>
@@ -50,12 +53,11 @@ sudo plymouth quit
 
 **But beware!** This might do some weird stuff with your screen. You can try changing to you default tty with `Ctrl`+`Alt`+`F2`.
 
-The splash screen will be black if there is an error in the script.
+If your splash screen shows up, then success! But if you get a black screen, the ist most likely an error somewhere in your script. It could also be that the screen shows up but your changes don't. Plymouth is really lax with syntax. If you try to call a method or use a property that does not exist, it will allow this without further errors and return `#NULL`. Doing any operation on `#NULL` will result in `#NULl` and in the end, writing something like `sprite.SetOpacity(#NULL)` won't crash your program.
 
+On my system this didn't work (It would just show the default splash screen with three dots, even though it would apply the splash screen correctly when booting) and the debug output didn't help me either.
 
-On my system this didn't work (It would just show the default splash screen with three dots. But it would apply the splash screen correctly when booting) and the debug output didn't help me anymore.
-
-So I took the most sensible approach ever and tried to everything in a VM. For documentation purposes, here are the steps one must take to get a similiar setup to the one I have.
+So I took the most sensible approach ever and tried to do everything in a VM. For documentation purposes, here are the steps one must take to get a similiar setup to the one I have.
 
 1. Install VirtualBox 7.0
 2. Download the Fedora 40 Workstation ISO
@@ -108,5 +110,3 @@ See [the arch wiki](https://wiki.archlinux.org/title/Plymouth#Troubleshooting) f
 
 
 On some systems that boot very quickly, the theme might not be able to run to the end. See [the arch wiki](https://wiki.archlinux.org/title/plymouth#Slow_down_boot_to_show_the_full_animation) for how to fix this.
-
-Note: This theme will only work if your monitor is wider than it is tall.
