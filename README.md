@@ -103,4 +103,4 @@ See [the arch wiki](https://wiki.archlinux.org/title/Plymouth#Troubleshooting) f
 
 
 
-On some systems that boot very quickly, the theme might not be able to run to the end. See [the arch wiki](https://wiki.archlinux.org/title/plymouth) for how to fix this.
+On some systems that boot very quickly, the theme might not be able to run to the end. See [the arch wiki](https://wiki.archlinux.org/title/plymouth#Slow_down_boot_to_show_the_full_animation) for how to fix this.
