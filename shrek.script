@@ -44,7 +44,7 @@ debug = Sprite();
 # debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
 debug.SetPosition(0, 0, 100);
 fun log(msg) {
-    #return; # Disable debug
+    return; # Disable debug
     debug.SetImage(Image.Text(msg, 255, 255, 255));
 }
 
@@ -232,9 +232,9 @@ fun progress_callback(time, progress) {
     animationTick(time);
     printProgress(time, progress);
     if (time - lastTick >= tickStep && !spiralFinished) {
-        addShrek(time);
-        iterations++;
-        lastTick += tickStep;
+       addShrek(time);
+       iterations++;
+       lastTick += tickStep;
     }
 }
 Plymouth.SetBootProgressFunction(progress_callback);
@@ -247,14 +247,13 @@ Plymouth.SetBootProgressFunction(progress_callback);
 
 # logo sprite is taller than actual text
 # if we say the extra space at the bottom = 1, then the whole sprite is 2 + 4/5
-offset = (1/ (2+4/5)) * logoSprite.GetImage().GetHeight();
+offsetFactor = (1/ (2+4/5));
 
 statusSprite = Sprite();
 messageSprite = Sprite();
 
 fun setStatus(status) {
-    val = logoSprite.GetY() + logoSprite.GetImage().GetHeight() + 10 - offset;
-    log ("offset: " + offset + " val: " + val);
+    offset = offsetFactor * logoImage.GetHeight();
     if (!animationsFinished) {
         return;
     }
@@ -264,6 +263,7 @@ fun setStatus(status) {
 }
 
 fun setMessage(message) {
+    offset = offsetFactor * logoImage.GetHeight();
     if (!animationsFinished) {
         return;
     }
