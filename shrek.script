@@ -113,7 +113,6 @@ fun addShrek(time) {
             });
         });
     }
-    # TODO:   extra check: w >= h
 }
 
 # Spiral Traversal
@@ -155,6 +154,12 @@ fun nextTile() {
         }
     }
 }
+
+
+
+animationsFinished = 0;
+
+
 
 logoAnimStart = -1;
 logoSprite = Sprite();
@@ -199,7 +204,7 @@ fun animateLogo(time) {
         sprite.SetX(val);
         log(val);
     }, fun(sprite, time) {
-        # TODO:
+        animationsFinished = 1;
     });
     
     # Animate logo opacity
@@ -235,6 +240,53 @@ fun progress_callback(time, progress) {
 }
 Plymouth.SetBootProgressFunction(progress_callback);
 
+
+
+# =============================================
+# -------------  Other Callbacks --------------
+# =============================================
+
+# logo sprite is taller than actual text
+# if we say the extra space at the bottom = 1, then the whole sprite is 2 + 4/5
+offset = (1/ (2+4/5)) * logoSprite.GetImage().GetHeight();
+
+statusSprite = Sprite();
+messageSprite = Sprite();
+
+fun setStatus(status) {
+    if (!animationsFinished) {
+        return;
+    }
+    statusSprite.SetImage(Image.Text(status, 255, 255, 255));
+    statusSprite.SetX(logoEndX + logoSprite.GetImage().GetWidth() / 2 - statusSprite.GetImage().GetWidth() / 2);
+    statusSprite.SetY(logoSprite.GetY() + logoSprite.GetImage().GetHeight() + 10 - offset);
+}
+
+fun setMessage(message) {
+    if (!animationsFinished) {
+        return;
+    }
+    messageSprite.SetImage(Image.Text(message, 255, 255, 255));
+    messageSprite.SetX(logoEndX + logoSprite.GetImage().GetWidth() / 2 - messageSprite.GetImage().GetWidth() / 2);
+    messageSprite.SetY(logoSprite.GetY() + logoSprite.GetImage().GetHeight() + 30 - offset);
+}
+
+Plymouth.SetUpdateStatusFunction(setStatus);
+Plymouth.SetDisplayPasswordFunction(fun(prompt, bulletCount) {
+    bullets = "";
+    for (local.i = 0; local.i < bulletCount; local.i++) {
+        bullets += "*";
+    }
+    setMessage(prompt + "\n> " + bullets);
+});
+Plymouth.SetDisplayQuestionFunction(fun(prompt, entryContents) {
+    setMessage(prompt + "\n> " + entryContents);
+});
+Plymouth.SetDisplayNormalFunction(fun() {
+    setStatus("");
+    setMessage("");
+});
+Plymouth.SetMessageFunction(setMessage);
 
 # =============================================
 # ------------- Animation Engine --------------
@@ -283,8 +335,6 @@ fun sineInOut(val) {
     return lerp(sineIn(val), sineOut(val), val, linear);
 }
 
-#tODO: spacing bewten shrek and logo
-
 animObjects = [];
 animObjectsLength = 0;
 
@@ -325,6 +375,13 @@ Animation.tick = fun(time) {
     progress = existenceTime / this.duration;
 
     val = lerp(this.start, this.end, progress, this.easing);
+    
+    if (Math.Clamp(val, this.start, this.end) != val) {
+        log(val);
+    }
+
+    #val = Math.Clamp(val, this.start, this.end);
+    
 
     if (existenceTime > this.duration) {
         this.tickCallback(target, end);
