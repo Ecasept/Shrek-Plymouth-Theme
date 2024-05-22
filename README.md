@@ -1,4 +1,4 @@
-# Plymouth Shrek Theme
+# Shrek Plymouth Theme
 So you're probably asking yourself what this even is? You know when your computer boots up you usually get your distributions logo and a spinning thing? That screen is managed by a program called [Plymouth](https://en.wikipedia.org/wiki/Plymouth_(software)) (pronounced */ˈplɪməθ/*). You can change this animation using a so called theme.
 
 # Basics
