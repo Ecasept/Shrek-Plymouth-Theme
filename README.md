@@ -1,5 +1,9 @@
 # Shrek Plymouth Theme
-So you're probably asking yourself what this even is? You know when your computer boots up you usually get your distributions logo and a spinning thing? That screen is managed by a program called [Plymouth](https://en.wikipedia.org/wiki/Plymouth_(software)) (pronounced */ˈplɪməθ/*). You can change this animation using a so called theme.
+
+This is a theme for Plymouth that uses shreks. It uses the `script` module to run a custom script that animates the sprites on the splash screen.
+
+# What is Plymouth
+You know when your computer boots up you usually get your distributions logo and a spinning thing? That screen is managed by a program called [Plymouth](https://en.wikipedia.org/wiki/Plymouth_(software)) (pronounced */ˈplɪməθ/*). You can change this animation using themes, and this is one of them.
 
 # Basics
 Your themes are located under `/usr/share/plymouth/themes/`.
@@ -20,7 +24,13 @@ sudo dnf install plymouth-plugin-script
 ```
 
 # This Theme
-This theme will only work if your monitor is wider than it is tall. If you want to install it, execute `sudo ./install.sh` inside the `shrek/` directory.
+
+This theme must be put in a folder called `shrek/`. You can do this using this command:
+```sh
+git clone https://github.com/Ecasept/Shrek-Plymouth-Theme.git shrek/
+```
+
+This theme will only work if your monitor is wider than it is tall. If you want to install it, execute `sudo ./install.sh` inside the `shrek/` directory, or manually move the files and set it as the default theme.
 
 # Testing
 If you want to install your theme, you need to execute this command (it might take a while to execute).
