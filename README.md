@@ -25,7 +25,7 @@ sudo dnf install plymouth-plugin-script
 
 # This Theme
 
-This theme must be put in a folder called `shrek/`. You can do this using this command:
+This theme must be put in a folder called `shrek`. You can do this using this command:
 ```sh
 git clone https://github.com/Ecasept/Shrek-Plymouth-Theme.git shrek/
 ```
