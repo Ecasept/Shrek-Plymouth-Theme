@@ -30,7 +30,7 @@ horizontalSpacing = horizontalExtraSpace / (shreksPerRow - 1);
 
 
 
-fadeTime = 4; # seconds to fade in and out
+fadeTime = 2;
 logoTime = 2;
 
 spiralFinished = 0;
@@ -77,18 +77,39 @@ fun addShrek(time) {
     shreks[index].sprite.SetPosition(cX * width + cX * horizontalSpacing, cY * height, 10);
     shreks[index].sprite.SetOpacity(0);
 
+    # Check if last shrek
     if (cX == ceil(shreksPerRow / 2) - 1 && cY == ceil(shreksPerColumn / 2) - 1) {
         spiralFinished = 1;
     }
 
     if (spiralFinished) {
-        Animation(shreks[index].sprite, time, fadeTime / 2, 0, 1, 0, "quadratic", fun(sprite, val) {
-            sprite.SetOpacity(-val + 1);
-        }, fun(sprite, time) { animateLogo(time); });
+        # last shrek
+
+        # Fade in
+        Animation(shreks[index].sprite, time, fadeTime / 2, 0, 1, quadraticOut, fun(sprite, val) {
+            sprite.SetOpacity(val);
+        }, fun(sprite, time) {
+            # Wait
+            Animation(sprite, time, fadeTime / 2, 1, 1, linear, fun(sprite, val) {
+                # Do nothing
+            }, fun(sprite, time) {
+                animateLogo(time);
+            });
+        });
     } else {
-        Animation(shreks[index].sprite, time, fadeTime, 0, 1, 1, "quadratic", fun(sprite, val) {
-            sprite.SetOpacity(-val + 1);
-        }, fun(sprite, time) {});
+        # other shreks
+
+        # Fade in
+        Animation(shreks[index].sprite, time, fadeTime / 2, 0, 1, quadraticOut, fun(sprite, val) {
+            sprite.SetOpacity(val);
+        }, fun(sprite, time) {
+            # Fade out
+            Animation(sprite, time, fadeTime / 2, 1, 0, quadraticIn, fun(sprite, val) {
+                sprite.SetOpacity(val);
+            }, fun(sprite, time) {
+                
+            });
+        });
     }
     # TODO:   extra check: w >= h
 }
@@ -154,14 +175,14 @@ blackSprite = Sprite(blackImage);
 blackSprite.SetPosition(blackPos, 0, 1000);
 blackSprite.SetOpacity(0);
 
-    fun animateLogo(time) {
+fun animateLogo(time) {
     log(logoSprite.GetImage().GetWidth());
-    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndXPos, 0, "quadratic", fun(sprite, val) {
+    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndXPos, quadraticInOut, fun(sprite, val) {
         val += logoEndXPos;
         sprite.SetX(val);
         log(val);
     }, fun(sprite, time) {
-        sprite.SetOpacity(1);
+        # TODO:
     });
 }
 
@@ -186,25 +207,24 @@ Plymouth.SetBootProgressFunction(progress_callback);
 # =============================================
 
 
-# Easing = [] | global.Easing;
-# Easing.lerp = fun(start, end, progress, ease) {
-#     return start + (end - start) * ease(progress);
-# };
-# Easing.linear = fun(val) {
-#     return val;
-# };
-# Easing.flip = fun(val) {
-#     return 1 - val;
-# };
-# Easing.quadraticIn = fun(val) {
-#     return val * val;
-# };
-# Easing.quadraticOut = fun(val) {
-#     return this.flip(this.quadraticIn(this.flip(val)));
-# };
-# Easing.quadraticInOut = fun(x) {
-#     return this.lerp(this.quadraticIn(x), this.quadraticOut(x), x, this.linear);
-# };
+fun lerp(start, end, progress, ease) {
+    return start + (end - start) * ease(progress);
+}
+fun linear(val) {
+    return val;
+}
+fun flip(val) {
+    return 1 - val;
+}
+fun quadraticIn(val) {
+    return val * val;
+}
+fun quadraticOut(val) {
+    return flip(quadraticIn(flip(val)));
+}
+fun quadraticInOut(x) {
+    return lerp(quadraticIn(x), quadraticOut(x), x, linear);
+}
 
 
 
@@ -219,7 +239,7 @@ fun animationTick(time) {
 }
 
 # --------------- Constructor -----------------
-Animation = fun(target, startTime, duration, start, end, dual, type, tickCallback, endCallback) {
+Animation = fun(target, startTime, duration, start, end, easing, tickCallback, endCallback) {
     newAnim = [] | global.Animation;
     newAnim.target = target;
     newAnim.startTime = startTime;
@@ -247,8 +267,7 @@ Animation.tick = fun(time) {
     existenceTime = time - this.startTime;
     progress = existenceTime / this.duration;
 
-    #val = Easing.lerp(this.start, this.end, progress, this.easing);
-    val = progress;
+    val = lerp(this.start, this.end, progress, this.easing);
 
     this.tickCallback(target, val);
     if (existenceTime > this.duration) {
