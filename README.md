@@ -2,7 +2,21 @@
 
 This is a theme for Plymouth that uses shreks. It uses the `script` module to run a custom script that animates the sprites on the splash screen.
 
-# What is Plymouth
+This theme must be put into a folder called `shrek`. You can do this using this command:
+```sh
+git clone https://github.com/Ecasept/Shrek-Plymouth-Theme.git shrek/
+```
+
+If you want to install it, execute `sudo ./install.sh` inside the `shrek/` directory, or manually move the files and set it as the default theme.
+
+This theme will only work if your monitor is wider than it is tall. 
+
+You need to have the script plugin installed. On Fedora you can install it with this command:
+```sh
+sudo dnf install plymouth-plugin-script
+```
+
+# What is Plymouth?
 You know when your computer boots up you usually get your distributions logo and a spinning thing? That screen is managed by a program called [Plymouth](https://en.wikipedia.org/wiki/Plymouth_(software)) (pronounced */ˈplɪməθ/*). You can change this animation using themes, and this is one of them.
 
 # Basics
@@ -18,21 +32,9 @@ ImageDir=/usr/share/plymouth/themes/<i>your theme</i>/
 ScriptDir=/usr/share/plymouth/themes/<i>your theme</i>/<i>your theme</i>.script
 </pre>
 
-Note: You may need to install the script plugin. On Fedora this can be done using:
-```sh
-sudo dnf install plymouth-plugin-script
-```
+Note: You may need to install the script plugin. See above for how to do this.
 
-# This Theme
-
-This theme must be put in a folder called `shrek`. You can do this using this command:
-```sh
-git clone https://github.com/Ecasept/Shrek-Plymouth-Theme.git shrek/
-```
-
-This theme will only work if your monitor is wider than it is tall. If you want to install it, execute `sudo ./install.sh` inside the `shrek/` directory, or manually move the files and set it as the default theme.
-
-# Testing
+# Installing & Testing
 If you want to install your theme, you need to execute this command (it might take a while to execute).
 <pre>
 sudo plymouth-set-default-theme -R <i>your-theme</i>
@@ -61,7 +63,7 @@ sudo plymouth hide-splash
 sudo plymouth quit
 ```
 
-**But beware!** This might do some weird stuff with your screen. You can try changing to you default tty with `Ctrl`+`Alt`+`F2`.
+**But beware!** This might do some weird stuff with your screen. If you can't access your computer anymore (even after 5 seconds), you can try changing to the default tty with `Ctrl`+`Alt`+`F2`. Otherwise you can try the alternate setup using a VM (further down on this page).
 
 If your splash screen shows up, then success! But if you get a black screen, the ist most likely an error somewhere in your script. It could also be that the screen shows up but your changes don't. Plymouth is really lax with syntax. If you try to call a method or use a property that does not exist, it will allow this without further errors and return `#NULL`. Doing any operation on `#NULL` will result in `#NULl` and in the end, writing something like `sprite.SetOpacity(#NULL)` won't crash your program.
 
@@ -106,7 +108,7 @@ There is almost no documentation for Plymouth's scripting language which makes i
 
 Generally the language feels like a mixture of Python and JavaScript, containing many of their basic features, albeit lacking most advanced features.
 
-# Other
+# Other potentially important stuff
 
 If you want to see the output of plymouth when booting, you need to do this:
 1. When your computer is booting, go into the grub menu (if it doesn't show up, search on the internet)
@@ -119,4 +121,4 @@ See [the arch wiki](https://wiki.archlinux.org/title/Plymouth#Troubleshooting) f
 
 
 
-On some systems that boot very quickly, the theme might not be able to run to the end. See [the arch wiki](https://wiki.archlinux.org/title/plymouth#Slow_down_boot_to_show_the_full_animation) for how to fix this.
+On some systems that boot very quickly, the theme might not be able to finish its animations. See [the arch wiki](https://wiki.archlinux.org/title/plymouth#Slow_down_boot_to_show_the_full_animation) for how to fix this.
