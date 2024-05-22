@@ -44,7 +44,7 @@ debug = Sprite();
 # debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
 debug.SetPosition(0, 0, 100);
 fun log(msg) {
-    return; # Disable debug
+    #return; # Disable debug
     debug.SetImage(Image.Text(msg, 255, 255, 255));
 }
 
@@ -202,7 +202,6 @@ fun animateLogo(time) {
     # Animate logo to the right
     Animation(logoSprite, time, logoTime, logoStartXPos, logoEndX, sineInOut, fun(sprite, val) {
         sprite.SetX(val);
-        log(val);
     }, fun(sprite, time) {
         animationsFinished = 1;
     });
@@ -254,6 +253,8 @@ statusSprite = Sprite();
 messageSprite = Sprite();
 
 fun setStatus(status) {
+    val = logoSprite.GetY() + logoSprite.GetImage().GetHeight() + 10 - offset;
+    log ("offset: " + offset + " val: " + val);
     if (!animationsFinished) {
         return;
     }
@@ -375,11 +376,10 @@ Animation.tick = fun(time) {
     progress = existenceTime / this.duration;
 
     val = lerp(this.start, this.end, progress, this.easing);
-    
-    if (Math.Clamp(val, this.start, this.end) != val) {
-        log(val);
-    }
 
+    val = Math.Min(val, Math.Max(this.start, this.end));
+    # clamp doesn't work, probably because it clamps even if
+    # eg. val == start and then does something like val = end
     #val = Math.Clamp(val, this.start, this.end);
     
 

@@ -20,7 +20,7 @@ sudo dnf install plymouth-plugin-script
 ```
 
 # This Theme
-This theme will only work if your monitor is wider than it is tall. If you want to install it, execute `sudo ./install.sh`.
+This theme will only work if your monitor is wider than it is tall. If you want to install it, execute `sudo ./install.sh` inside the `shrek/` directory.
 
 # Testing
 If you want to install your theme, you need to execute this command (it might take a while to execute).
@@ -75,7 +75,7 @@ So I took the most sensible approach ever and tried to do everything in a VM. Fo
 9. Edit the `HOME_DIR` variables in `watch.sh` and `startplymouth.sh` to your users home directory on the VM.
 
 How to use:
-- execute `./viewvm.sh` on your computer.
+- execute `./viewvm.sh` inside the `shrek/` directory.
 - this will remove `~/VM Shared/shrek`, copy over the new files with `rsync` (install it if needed) and touch `~/VM Shared/touch.txt`
 ---
 - Now the files should be synced to your VM
@@ -83,7 +83,7 @@ How to use:
 - this will watch `$HOME_DIR/VMShared/touch.txt` for changes and execute `startplymouth.sh` when changes are noticed.
 - `startplymouth.sh` copies over the new theme files to `/usr/share/plymouth/themes/shrek`, restarts the plymouth daemon and shows the splash
 ---
-- now every time when you execute `./viewvm.sh` the files should be copied over to `~/VM Shared`, synced to the VM by VirtualBox, the VM should notice the changes, copy the new files to the themes directory and show the splash.
+- now every time when you execute `./viewvm.sh` inside of the `shrek/` directory, the files should be copied over to `~/VM Shared`, synced to the VM by VirtualBox, the VM should notice the changes, copy the new files to the themes directory and show the splash.
 
 # Scripting
 OK so you've successfully managed to setup the plymouth theme and get the VM setup running (or you had more luck than me and it just worked), how to you program the theme???
