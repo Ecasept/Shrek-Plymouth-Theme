@@ -86,9 +86,13 @@ How to use:
 # Scripting
 OK so you've successfully managed to setup the plymouth theme and get the VM setup running (or you had more luck than me and it just worked), how to you program the theme???
 
-Well today is your lucky day because there is actually a bit of [documentation](https://freedesktop.org/wiki/Software/Plymouth/Scripts/) for the language!!!! The [Plymouth website](https://freedesktop.org/wiki/Software/Plymouth/) also has some usefull links, especially [this](https://brej.org/blog/?cat=16) blog post which contains [this](http://brej.org/blog/wp-content/uploads/2010/04/blocks.tar.gz) theme with a script that I extensively analysed to gain more insight into the language's features.
+There is almost no documentation for Plymouth's scripting language which makes it very difficult to program using it. But you're lucky, because I have been in that exact position and have collected useful bits of documentation:
+- There actually is a bit of [basic documentation](https://freedesktop.org/wiki/Software/Plymouth/Scripts/)
+- The [Plymouth website](https://freedesktop.org/wiki/Software/Plymouth/) also has some usefull links
+- There is [this series of blog posts](https://brej.org/blog/?cat=16) that describes a few features. It also contains [a link to a theme](http://brej.org/blog/wp-content/uploads/2010/04/blocks.tar.gz) with a script that uses many features, and I urge you to take a look at it so that you get an overview of the language. When you're not sure if the language supports a specific feature, take a look at that script to see if it exists.
+- And finally you can also take a look at this theme's code and search through it just like the other theme.
 
-You can also take a look at this theme's code to learn more about what you can do in the scripting language. It feels like a mixture of JavaScript and Python, albeit missing many of the more advanced features of both languages.
+Generally the language feels like a mixture of Python and JavaScript, containing many of their basic features, albeit lacking most advanced features.
 
 # Other
 
