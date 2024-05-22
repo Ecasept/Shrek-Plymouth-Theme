@@ -99,3 +99,5 @@ OK so you've successfully managed to setup the plymouth theme and get the VM set
 Well today is your lucky day because there is actually a bit of [documentation](https://freedesktop.org/wiki/Software/Plymouth/Scripts/) for the language!!!! The [Plymouth website](https://freedesktop.org/wiki/Software/Plymouth/) also has some usefull links, especially [this](https://brej.org/blog/?cat=16) blog post which contains [this](http://brej.org/blog/wp-content/uploads/2010/04/blocks.tar.gz) theme with a script that I extensively analysed to gain more insight into the language's features.
 
 You can also take a look at this theme's code to learn more about what you can do in the scripting language. It feels like a mixture of JavaScript and Python, albeit missing many of the more advanced features of both languages.
+
+TODO: add how to change min length of plymouth splash screen

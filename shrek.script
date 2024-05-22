@@ -30,8 +30,8 @@ horizontalSpacing = horizontalExtraSpace / (shreksPerRow - 1);
 
 
 
-fadeTime = 2;
-logoTime = 2;
+fadeTime = 1;
+logoTime = 1;
 
 spiralFinished = 0;
 
@@ -41,8 +41,10 @@ shrekCount = 0;
 
 
 debug = Sprite();
-debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
+# debug.SetPosition(Window.GetWidth() / 2, Window.GetHeight() / 2, 100);
+debug.SetPosition(0, 0, 100);
 fun log(msg) {
+    return; # Disable debug
     debug.SetImage(Image.Text(msg, 255, 255, 255));
 }
 
@@ -157,7 +159,7 @@ fun nextTile() {
 logoAnimStart = -1;
 logoSprite = Sprite();
 logoSprite.SetImage(logoImage);
-logoSprite.SetOpacity(1);
+logoSprite.SetOpacity(0);
 
 lastShrekXTile = ceil(shreksPerRow / 2) - 1;
 lastShrekPos = lastShrekXTile * shrekImage.GetWidth() + lastShrekXTile * horizontalSpacing;
@@ -166,39 +168,60 @@ logoSprite.SetPosition(logoStartXPos, Window.GetHeight() / 2 - logoImage.GetHeig
 
 
 # shrekImage and logoImage are next to each other and should be in the middle
-combinedWidth = shrekImage.GetWidth() + logoImage.GetWidth();
+
+logoSpacing = shrekImage.GetWidth() / 6;
+
+combinedWidth = shrekImage.GetWidth() + logoImage.GetWidth() + logoSpacing;
 combinedMiddle = Window.GetWidth() / 2 - combinedWidth / 2;
 
-logoEndX = combinedMiddle + shrekImage.GetWidth();
+logoEndX = combinedMiddle + shrekImage.GetWidth() + logoSpacing;
+
+
 shrekEndX = combinedMiddle;
 
 blackImage = Image("black.png");
-blackRightEdgePos = lastShrekPos + shrekImage.GetWidth();
+blackImage.Scale(Window.GetWidth(), Window.GetHeight());
+
+blackRightEdgePos = lastShrekPos + shrekImage.GetWidth(); # Position of right edge
 blackPos = blackRightEdgePos - blackImage.GetWidth();
+# Subtract half of shrek so that it doesn't overlap with the logo
+blackPos -= shrekImage.GetWidth() / 2;
+
 blackSprite = Sprite(blackImage);
 blackSprite.SetPosition(blackPos, 0, -10);
 blackSprite.SetOpacity(1);
 
+logoAnimRange = logoEndX - logoStartXPos;
+
 fun animateLogo(time) {
     # Animate logo to the right
-    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndX, quadraticInOut, fun(sprite, val) {
+    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndX, sineInOut, fun(sprite, val) {
         sprite.SetX(val);
+        log(val);
     }, fun(sprite, time) {
         # TODO:
     });
-    # Animate shrek to the left
-    Animation(shreks[shrekCount - 1].sprite, time, logoTime, lastShrekPos, shrekEndX, quadraticInOut, fun(sprite, val) {
-        sprite.SetX(val);
+    
+    # Animate logo opacity
+    Animation(logoSprite, time, logoTime, 0, 1, sineOut, fun(sprite, val) {
+        sprite.SetOpacity(val);
     }, fun(sprite, time) {});
+   
+    # Animate shrek to the left
+    Animation(shreks[shrekCount - 1].sprite, time, logoTime, lastShrekPos, shrekEndX, sineInOut, fun(sprite, val) {
+        sprite.SetX(val);
+        #log(val);
+    }, fun(sprite, time) {});
+    
     # Animate black to the left
     offset = lastShrekPos - shrekEndX; # Animate the same as shrek
-    Animation(blackSprite, time, logoTime, blackPos, blackPos - offset, quadraticInOut, fun(sprite, val) {
+    Animation(blackSprite, time, logoTime, blackPos, blackPos - offset, sineInOut, fun(sprite, val) {
         sprite.SetX(val);
     }, fun(sprite, time) {});
 }
 
 iterations = 0;
-tickStep = 0.17;
+tickStep = 0.1;
 lastTick = 1;
 
 fun progress_callback(time, progress) {
@@ -237,7 +260,30 @@ fun quadraticInOut(x) {
     return lerp(quadraticIn(x), quadraticOut(x), x, linear);
 }
 
+fun cubicIn(val) {
+    return val * val * val;
+}
+fun cubicOut(val) {
+    return flip(cubicIn(flip(val)));
+}
+fun cubicInOut(x) {
+    return lerp(cubicIn(x), cubicOut(x), x, linear);
+}
 
+
+fun sineIn(val) {
+    return 1 - Math.Cos(val * Math.Pi / 2);
+}
+
+fun sineOut(val) {
+    return Math.Sin(val * Math.Pi / 2);
+}
+
+fun sineInOut(val) {
+    return lerp(sineIn(val), sineOut(val), val, linear);
+}
+
+#tODO: spacing bewten shrek and logo
 
 animObjects = [];
 animObjectsLength = 0;
@@ -280,10 +326,12 @@ Animation.tick = fun(time) {
 
     val = lerp(this.start, this.end, progress, this.easing);
 
-    this.tickCallback(target, val);
     if (existenceTime > this.duration) {
+        this.tickCallback(target, end);
         this.endCallback(target, time);
         this.hasEnded = 1;
+        return;
     }
+    this.tickCallback(target, val);
 
 };
