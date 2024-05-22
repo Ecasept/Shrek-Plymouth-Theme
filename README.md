@@ -50,16 +50,6 @@ sudo plymouth quit
 
 **But beware!** This might do some weird stuff with your screen. You can try changing to you default tty with `Ctrl`+`Alt`+`F2`.
 
-Note: If you want to see the output of plymouth when booting, you need to do this:
-1. When your computer is booting, go into the grub menu (if it doesn't show up, search on the internet)
-2. Press `e` to edit the `Kernel parameters`
-3. In the line that starts with `linux`, add `plymouth.debug`
-4. Press `Ctrl`+`X` to finish booting your computer
-5. Read the log file with `sudo cat /var/log/plymouth-debug.log`
-
-See [the arch wiki](https://wiki.archlinux.org/title/Plymouth#Troubleshooting) for more info.
-
-
 
 
 
@@ -100,4 +90,17 @@ Well today is your lucky day because there is actually a bit of [documentation](
 
 You can also take a look at this theme's code to learn more about what you can do in the scripting language. It feels like a mixture of JavaScript and Python, albeit missing many of the more advanced features of both languages.
 
-TODO: add how to change min length of plymouth splash screen
+# Other
+
+If you want to see the output of plymouth when booting, you need to do this:
+1. When your computer is booting, go into the grub menu (if it doesn't show up, search on the internet)
+2. Press `e` to edit the `Kernel parameters`
+3. In the line that starts with `linux`, add `plymouth.debug`
+4. Press `Ctrl`+`X` to finish booting your computer
+5. Read the log file with `sudo cat /var/log/plymouth-debug.log`
+
+See [the arch wiki](https://wiki.archlinux.org/title/Plymouth#Troubleshooting) for more info.
+
+
+
+On some systems that boot very quickly, the theme might not be able to run to the end. See [the arch wiki](https://wiki.archlinux.org/title/plymouth) for how to fix this.
