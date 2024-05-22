@@ -7,7 +7,6 @@ logoImage = Image("logo.png");
 logoImage = logoImage.Scale(logoImage.GetWidth() * 0.25, logoImage.GetHeight() * 0.25);
 
 shreksPerColumn = 5;
-
 targetShrekHeight = Window.GetHeight() / shreksPerColumn;
 scaleFactor = targetShrekHeight / shrekImage.GetHeight();
 shrekImage = shrekImage.Scale(targetShrekHeight, shrekImage.GetWidth() * scaleFactor);
@@ -214,7 +213,6 @@ fun animateLogo(time) {
     # Animate shrek to the left
     Animation(shreks[shrekCount - 1].sprite, time, logoTime, lastShrekPos, shrekEndX, sineInOut, fun(sprite, val) {
         sprite.SetX(val);
-        #log(val);
     }, fun(sprite, time) {});
     
     # Animate black to the left
@@ -229,6 +227,7 @@ tickStep = 0.1;
 lastTick = 1;
 
 fun progress_callback(time, progress) {
+    # log("height: " +  Window.GetHeight() + " time: " + time + " s0x: " + shreks[0].sprite.GetY() + " s-1x: " + shreks[shrekCount-1].sprite.GetY() + " shrekHeight: " + shrekImage.GetHeight() + " targetShrekHeight: " + targetShrekHeight + " scaleFactor: " + scaleFactor + " progress: " + progress);
     animationTick(time);
     printProgress(time, progress);
     if (time - lastTick >= tickStep && !spiralFinished) {
