@@ -187,6 +187,28 @@ Plymouth.SetBootProgressFunction(progress_callback);
 #// =============================================
 
 
+# Easing = [] | global.Easing;
+# Easing.lerp = fun(start, end, progress, ease) {
+#     return start + (end - start) * ease(progress);
+# };
+# Easing.linear = fun(val) {
+#     return val;
+# };
+# Easing.flip = fun(val) {
+#     return 1 - val;
+# };
+# Easing.quadraticIn = fun(val) {
+#     return val * val;
+# };
+# Easing.quadraticOut = fun(val) {
+#     return this.flip(this.quadraticIn(this.flip(val)));
+# };
+# Easing.quadraticInOut = fun(x) {
+#     return this.lerp(this.quadraticIn(x), this.quadraticOut(x), x, this.linear);
+# };
+
+
+
 animObjects = [];
 animObjectsLength = 0;
 
@@ -203,8 +225,7 @@ Animation = fun(target, startTime, duration, start, end, dual, type, tickCallbac
     newAnim.target = target;
     newAnim.startTime = startTime;
     newAnim.duration = duration;
-    newAnim.dual = dual;
-    newAnim.type = type;
+    newAnim.easing = easing;
     newAnim.tickCallback = tickCallback;
     newAnim.endCallback = endCallback;
     newAnim.start = start;
@@ -223,28 +244,14 @@ Animation.tick = fun(time) {
     if (this.hasEnded) {
         return;
     }
-    if (this.dual) {
-        existenceTime = time - this.startTime;
-        factor = existenceTime - this.duration / 2; # // -duration -> 0 -> duration
-        factor /= this.duration / 2; # - 1 -> 0 -> 1
-    } else {
-        existenceTime = time - this.startTime;
-        factor = existenceTime - this.duration;
-        factor /= this.duration;
-    }
 
-    if (this.type == "quadratic") {
-        factor *= factor;
-    }
+    existenceTime = time - this.startTime;
+    progress = existenceTime / this.duration;
 
-    #//factor = Math.Clamp(timepoint, 0, 1);
+    #val = Easing.lerp(this.start, this.end, progress, this.easing);
+    val = progress;
 
-    if (this.target.GetImage().GetWidth() == 480) {
-        #log("factor:" + factor);
-    }
-
-    newVal = this.start + (this.end - this.start) * factor;
-    this.tickCallback(target, newVal);
+    this.tickCallback(target, val);
     if (existenceTime > this.duration) {
         this.endCallback(target, time);
         this.hasEnded = 1;
