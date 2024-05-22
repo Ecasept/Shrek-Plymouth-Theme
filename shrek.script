@@ -64,7 +64,6 @@ fun ceil(num) {
 }
 
 fun addShrek(time) {
-#    // spr.SetImage(Image.Text(Window.GetWidth() + "    " + Window.GetHeight() / 5, 0, 255, 255));
     width = shrekImage.GetWidth();
     height = shrekImage.GetHeight();
 
@@ -91,7 +90,7 @@ fun addShrek(time) {
             sprite.SetOpacity(-val + 1);
         }, fun(sprite, time) {});
     }
-    #//  TODO:   extra check: w >= h
+    # TODO:   extra check: w >= h
 }
 
 # Spiral Traversal
@@ -182,9 +181,9 @@ fun progress_callback(time, progress) {
 Plymouth.SetBootProgressFunction(progress_callback);
 
 
-#// =============================================
-#// ------------- Animation Engine --------------
-#// =============================================
+# =============================================
+# ------------- Animation Engine --------------
+# =============================================
 
 
 # Easing = [] | global.Easing;
@@ -212,14 +211,14 @@ Plymouth.SetBootProgressFunction(progress_callback);
 animObjects = [];
 animObjectsLength = 0;
 
-#// -------- Animation Tick for all animations ----------
+# -------- Animation Tick for all animations ----------
 fun animationTick(time) {
     for (local.i = 0; local.i < animObjectsLength; local.i++) {
         animObjects[local.i].tick(time);
     }
 }
 
-#// --------------- Constructor -----------------
+# --------------- Constructor -----------------
 Animation = fun(target, startTime, duration, start, end, dual, type, tickCallback, endCallback) {
     newAnim = [] | global.Animation;
     newAnim.target = target;
@@ -239,7 +238,7 @@ Animation = fun(target, startTime, duration, start, end, dual, type, tickCallbac
     return newAnim;
 } | [];
 
-#// --------------- Animation Tick -----------------
+# --------------- Animation Tick -----------------
 Animation.tick = fun(time) {
     if (this.hasEnded) {
         return;
