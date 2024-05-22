@@ -2,8 +2,6 @@
 Theme=Shrek
 Description=Cool Shrek Theme
 ModuleName=script
-ShowDelay=100
-DeviceTimeout=8
 
 [script]
 ImageDir=/usr/share/plymouth/themes/shrek/

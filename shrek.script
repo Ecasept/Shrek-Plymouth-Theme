@@ -162,28 +162,39 @@ logoSprite.SetOpacity(1);
 lastShrekXTile = ceil(shreksPerRow / 2) - 1;
 lastShrekPos = lastShrekXTile * shrekImage.GetWidth() + lastShrekXTile * horizontalSpacing;
 logoStartXPos = lastShrekPos + shrekImage.GetWidth() - logoImage.GetWidth();
-log(logoStartXPos);
-logoSprite.SetPosition(logoStartXPos, Window.GetHeight() / 2 - logoImage.GetHeight() / 2, 10);
+logoSprite.SetPosition(logoStartXPos, Window.GetHeight() / 2 - logoImage.GetHeight() / 2, -11);
 
-logoEndXPos = Window.GetWidth() / 2;
 
+# shrekImage and logoImage are next to each other and should be in the middle
+combinedWidth = shrekImage.GetWidth() + logoImage.GetWidth();
+combinedMiddle = Window.GetWidth() / 2 - combinedWidth / 2;
+
+logoEndX = combinedMiddle + shrekImage.GetWidth();
+shrekEndX = combinedMiddle;
 
 blackImage = Image("black.png");
 blackRightEdgePos = lastShrekPos + shrekImage.GetWidth();
 blackPos = blackRightEdgePos - blackImage.GetWidth();
 blackSprite = Sprite(blackImage);
-blackSprite.SetPosition(blackPos, 0, 1000);
-blackSprite.SetOpacity(0);
+blackSprite.SetPosition(blackPos, 0, -10);
+blackSprite.SetOpacity(1);
 
 fun animateLogo(time) {
-    log(logoSprite.GetImage().GetWidth());
-    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndXPos, quadraticInOut, fun(sprite, val) {
-        val += logoEndXPos;
+    # Animate logo to the right
+    Animation(logoSprite, time, logoTime, logoStartXPos, logoEndX, quadraticInOut, fun(sprite, val) {
         sprite.SetX(val);
-        log(val);
     }, fun(sprite, time) {
         # TODO:
     });
+    # Animate shrek to the left
+    Animation(shreks[shrekCount - 1].sprite, time, logoTime, lastShrekPos, shrekEndX, quadraticInOut, fun(sprite, val) {
+        sprite.SetX(val);
+    }, fun(sprite, time) {});
+    # Animate black to the left
+    offset = lastShrekPos - shrekEndX; # Animate the same as shrek
+    Animation(blackSprite, time, logoTime, blackPos, blackPos - offset, quadraticInOut, fun(sprite, val) {
+        sprite.SetX(val);
+    }, fun(sprite, time) {});
 }
 
 iterations = 0;
